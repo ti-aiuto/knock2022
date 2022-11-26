@@ -33,13 +33,13 @@ CSV.foreach("order_statements.csv", headers: true) do |row|
     
 end
 
-def generate_access_log_item(accessed_at, url, ua, user_id)
+def generate_access_log_item(accessed_at, path, ua, user_id, method: 'GET', status_code: '200')
    
     [accessed_at.utc.iso8601, 
         accessed_at.to_date.iso8601, 
-        url, 
-        "GET", 
-        200, 
+        path, 
+        method, 
+        status_code, 
         ua, 
         SecureRandom.uuid, 
         user_id
@@ -77,4 +77,10 @@ end
 end
 
 
-p access_log
+CSV.open('access_log.csv','w') do |csv|
+    csv << ['time', 'date_jst', 'path', 'method', 'status_code', 'user_agent', 'request_id', 'user_id']
+    access_log.each do |log_item|
+        csv << log_item
+    end
+end
+
