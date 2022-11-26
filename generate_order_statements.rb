@@ -18,7 +18,7 @@ CSV.foreach("users.csv", headers: true) do |row|
     end
     confirmed_at = Time.parse(row['confirmed_at'])
 
-    base_datetime =confirmed_at + rand(3600)
+    base_datetime =confirmed_at + 600 + rand(3600)
     rand(10).times do
         total = 0
         order_items = items_map.keys.sample((1 + rand(8)))

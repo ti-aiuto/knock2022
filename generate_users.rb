@@ -10,9 +10,9 @@ base_datetime = Time.new(2022, 11, 10)
     confirmed_at = nil
     if rand() <= 0.8
         if rand() <= 0.8
-            confirmed_at = registered_at + rand(3600 * 3)
+            confirmed_at = registered_at + 30 + rand(3600 * 3)
         else
-            confirmed_at = registered_at + rand(8).days + rand(3600 * 3)
+            confirmed_at = registered_at + 30 + rand(8).days + rand(3600 * 3)
         end
     end
     users << [200001 + index, registered_at.utc.iso8601, confirmed_at&.utc&.iso8601]

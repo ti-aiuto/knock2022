@@ -15,6 +15,19 @@ static_pages = [
     "/ranking/daily",     
 ]
 
+item_pages = [
+    "/items/10001", 
+    "/items/10002", 
+    "/items/10003", 
+    "/items/10004", 
+    "/items/10005", 
+    "/items/10006", 
+    "/items/10007", 
+    "/items/10008", 
+    "/items/10009", 
+    "/items/10010", 
+]
+
 access_log = []
 
 items_map = {}
@@ -49,25 +62,30 @@ Time.zone =TZInfo::Timezone.get('Asia/Tokyo')
 
 base_datetime = Time.zone.local(2022, 11, 10)
 CSV.foreach("users.csv", headers: true) do |row|
+    user_id =  row['id'].to_i
+
     ua = uas.sample
     # ランダムに回遊したことにする
-    if rand() <= 0.5
+    rand(5).times do 
         accessed_at = base_datetime + rand(3600 * 24 * 20)
         access_log << generate_access_log_item(accessed_at, static_pages.sample, ua, row['id'].to_i)
     end
-    if rand() <= 0.5
+    rand(10).times do 
         accessed_at = base_datetime + rand(3600 * 24 * 20)
-        access_log << generate_access_log_item(accessed_at, static_pages.sample, ua, row['id'].to_i)
-    end
-    if rand() <= 0.5
-        accessed_at = base_datetime + rand(3600 * 24 * 20)
-        access_log << generate_access_log_item(accessed_at, static_pages.sample, ua, row['id'].to_i)
-    end
-    if rand() <= 0.5
-        accessed_at = base_datetime + rand(3600 * 24 * 20)
-        access_log << generate_access_log_item(accessed_at, static_pages.sample, ua, row['id'].to_i)
+        access_log << generate_access_log_item(accessed_at, item_pages.sample, ua, row['id'].to_i)
     end
 
+    registered_at = Time.zone.parse(row['registered_at'])
+    signup_time = registered_at - rand(600)
+
+    access_log << generate_access_log_item(signup_time, '/signup', ua, user_id)
+    access_log << generate_access_log_item(registered_at, '/signup', ua, user_id, method: 'POST', status_code: 302)
+
+    if row['confirmed_at'].present?
+        confirmed_at = Time.zone.parse(row['confirmed_at'])
+        access_log << generate_access_log_item(confirmed_at - rand(10), '/signup/activate', ua, user_id)
+        access_log << generate_access_log_item(confirmed_at, '/signup/activate', ua, user_id, method: 'POST', status_code: 302)    
+    end
 end
 
 1000.times do 
