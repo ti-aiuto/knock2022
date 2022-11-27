@@ -29,7 +29,7 @@ CSV.foreach("users.csv", headers: true) do |row|
         end
 
         orders << [current_order_count,row['id'].to_i, base_datetime.utc.iso8601, total]
-        base_datetime += rand(3) + rand(3600 * 24)
+        base_datetime += 3600 + rand(3600 * 24 * 2)
         current_order_count += 1
     end
 end

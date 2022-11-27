@@ -79,11 +79,17 @@ CSV.foreach("users.csv", headers: true) do |row|
     signup_time = registered_at - rand(300)
 
     access_log << generate_access_log_item(signup_time, '/signup', ua, user_id)
+    if rand() <= 0.1
+        access_log << generate_access_log_item(registered_at - 3.seconds, '/signup', ua, user_id, method: 'POST', status_code: 400)    
+    end
     access_log << generate_access_log_item(registered_at, '/signup', ua, user_id, method: 'POST', status_code: 302)
 
     if row['confirmed_at'].present?
         confirmed_at = Time.zone.parse(row['confirmed_at'])
         access_log << generate_access_log_item(confirmed_at - rand(20), '/signup/activate', ua, user_id)
+        if rand() <= 0.1
+            access_log << generate_access_log_item(confirmed_at - 3.seconds, '/signup/activate', ua, user_id, method: 'POST', status_code: 400)    
+        end
         access_log << generate_access_log_item(confirmed_at, '/signup/activate', ua, user_id, method: 'POST', status_code: 302)    
     end
 end
