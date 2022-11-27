@@ -36,14 +36,14 @@ CSV.foreach("items.csv", headers: true) do |row|
 end
 
 
-order_id_to_order = []
+orders = []
 CSV.foreach("orders.csv", headers: true) do |row|
-    order_id_to_order[row['id'].to_i] = {row: row}
+    orders << row
 end
 
-user_id_to_order_statements = []
+order_statements = []
 CSV.foreach("order_statements.csv", headers: true) do |row|
-    
+    order_statements << row
 end
 
 def generate_access_log_item(accessed_at, path, ua, user_id, method: 'GET', status_code: '200')
@@ -75,22 +75,40 @@ CSV.foreach("users.csv", headers: true) do |row|
         access_log << generate_access_log_item(accessed_at, item_pages.sample, ua, row['id'].to_i)
     end
 
+    # 仮登録完了のログ
     registered_at = Time.zone.parse(row['registered_at'])
     signup_time = registered_at - rand(300)
 
     access_log << generate_access_log_item(signup_time, '/signup', ua, user_id)
     if rand() <= 0.1
+        # たまに失敗
         access_log << generate_access_log_item(registered_at - 3.seconds, '/signup', ua, user_id, method: 'POST', status_code: 400)    
     end
     access_log << generate_access_log_item(registered_at, '/signup', ua, user_id, method: 'POST', status_code: 302)
 
+    # 本登録完了のログ
     if row['confirmed_at'].present?
         confirmed_at = Time.zone.parse(row['confirmed_at'])
         access_log << generate_access_log_item(confirmed_at - rand(20), '/signup/activate', ua, user_id)
         if rand() <= 0.1
-            access_log << generate_access_log_item(confirmed_at - 3.seconds, '/signup/activate', ua, user_id, method: 'POST', status_code: 400)    
+        # たまに失敗
+        access_log << generate_access_log_item(confirmed_at - 3.seconds, '/signup/activate', ua, user_id, method: 'POST', status_code: 400)    
         end
         access_log << generate_access_log_item(confirmed_at, '/signup/activate', ua, user_id, method: 'POST', status_code: 302)    
+    end
+
+    # カートへの追加・注文
+    orders.select { |order| order['user_id'].to_i == user_id }.each do |order|
+        ordered_at = Time.zone.parse(order['ordered_at'])
+
+        added_card = ordered_at - 1.minute - rand(60)
+        access_log << generate_access_log_item(ordered_at, '/cart', ua, user_id)    
+
+        if rand() <= 0.1
+        # たまに失敗
+            access_log << generate_access_log_item(added_card + rand(20), '/checkout', ua, user_id, method: 'POST', status_code: 400)    
+        end
+        access_log << generate_access_log_item(ordered_at, '/checkout', ua, user_id, method: 'POST', status_code: 302)    
     end
 end
 
