@@ -102,13 +102,14 @@ CSV.foreach("users.csv", headers: true) do |row|
         ordered_at = Time.zone.parse(order['ordered_at'])
 
         added_card = ordered_at - 1.minute - rand(60)
-        access_log << generate_access_log_item(ordered_at, '/cart', ua, user_id)    
+        access_log << generate_access_log_item(added_card, '/cart', ua, user_id)    
 
         if rand() <= 0.1
         # たまに失敗
             access_log << generate_access_log_item(added_card + rand(20), '/checkout', ua, user_id, method: 'POST', status_code: 400)    
         end
         access_log << generate_access_log_item(ordered_at, '/checkout', ua, user_id, method: 'POST', status_code: 302)    
+        access_log << generate_access_log_item(ordered_at + 1.second, '/checkout/complete', ua, user_id)    
     end
 end
 
