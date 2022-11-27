@@ -135,7 +135,7 @@ CSV.open('access_log_transform.csv','w') do |csv|
     end
 end
 
-CSV.open('access_log_row.csv','w') do |csv|
+CSV.open('access_log_raw.csv','w') do |csv|
     csv << ['time', 'message']
     access_log.each do |log_item|
         message = {
