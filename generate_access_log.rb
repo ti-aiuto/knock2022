@@ -101,7 +101,7 @@ CSV.foreach("users.csv", headers: true) do |row|
     orders.select { |order| order['user_id'].to_i == user_id }.each do |order|
         ordered_at = Time.zone.parse(order['ordered_at'])
 
-        added_card = ordered_at - 1.minute - rand(60)
+        added_card = ordered_at - rand(60)
         access_log << generate_access_log_item(added_card, '/cart', ua, user_id)    
 
         if rand() <= 0.1
@@ -110,6 +110,13 @@ CSV.foreach("users.csv", headers: true) do |row|
         end
         access_log << generate_access_log_item(ordered_at, '/checkout', ua, user_id, method: 'POST', status_code: 302)    
         access_log << generate_access_log_item(ordered_at + 1.second, '/checkout/complete', ua, user_id)    
+
+        order_statements.select { |statement| statement['order_id'].to_i == order['id'].to_i }.each do |statement|
+            item_id = statement['item_id'].to_i
+            item_added_cart_at = added_card - 1.minute - rand(500)
+            access_log << generate_access_log_item(item_added_cart_at - rand(20), "/items/#{item_id}", ua, user_id)
+            access_log << generate_access_log_item(item_added_cart_at, '/cart', ua, user_id, method: 'POST', status_code: 302)    
+        end
     end
 end
 
