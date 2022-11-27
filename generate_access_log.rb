@@ -1,6 +1,7 @@
 require 'active_support/all'
 require 'csv'
 require 'securerandom'
+require 'json'
 
 uas = [
     "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1", 
@@ -127,10 +128,25 @@ end
 end
 
 
-CSV.open('access_log.csv','w') do |csv|
+CSV.open('access_log_transform.csv','w') do |csv|
     csv << ['time', 'date_jst', 'path', 'method', 'status_code', 'user_agent', 'request_id', 'user_id']
     access_log.each do |log_item|
         csv << log_item
+    end
+end
+
+CSV.open('access_log_row.csv','w') do |csv|
+    csv << ['time', 'message']
+    access_log.each do |log_item|
+        message = {
+            path: log_item[2], 
+            method: log_item[3], 
+            status_code: log_item[4].to_s, 
+            user_agent: log_item[5].to_s, 
+            request_id: log_item[6].to_s, 
+            user_id: log_item[7].to_s.presence
+        }
+        csv << [Time.zone.parse(log_item[0]).to_i, message.to_json]
     end
 end
 
