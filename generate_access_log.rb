@@ -60,18 +60,18 @@ def generate_access_log_item(accessed_at, path, ua, user_id, method: 'GET', stat
 end
 Time.zone =TZInfo::Timezone.get('Asia/Tokyo')  
 
-base_datetime = Time.zone.local(2022, 11, 10)
+base_datetime = Time.zone.local(2022, 10, 1)
 CSV.foreach("users.csv", headers: true) do |row|
     user_id =  row['id'].to_i
 
     ua = uas.sample
     # ランダムに回遊したことにする
     rand(5).times do 
-        accessed_at = base_datetime + rand(3600 * 24 * 20)
+        accessed_at = base_datetime + rand(3600 * 24 * 25)
         access_log << generate_access_log_item(accessed_at, static_pages.sample, ua, row['id'].to_i)
     end
     rand(10).times do 
-        accessed_at = base_datetime + rand(3600 * 24 * 20)
+        accessed_at = base_datetime + rand(3600 * 24 * 25)
         access_log << generate_access_log_item(accessed_at, item_pages.sample, ua, row['id'].to_i)
     end
 
