@@ -4,7 +4,7 @@ require 'csv'
 users = []
 
 
-base_datetime = Time.new(2022, 11, 3)
+base_datetime = Time.new(2022, 10, 1)
 300.times do |index|
     registered_at = base_datetime + rand(20).days + rand(24).hours + rand(3600)
     confirmed_at = nil
