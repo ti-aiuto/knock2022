@@ -5,7 +5,7 @@ users = []
 
 
 base_datetime = Time.new(2022, 10, 1)
-300.times do |index|
+500.times do |index|
     registered_at = base_datetime + rand(20).days + rand(24).hours + rand(3600)
     confirmed_at = nil
     if rand() <= 0.8
