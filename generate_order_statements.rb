@@ -7,12 +7,12 @@ order_statements = []
 current_order_count = 5001
 
 items_map = {}
-CSV.foreach("items.csv", headers: true) do |row|
+CSV.foreach("csv/items.csv", headers: true) do |row|
     items_map[row['id'].to_i] = row['price'].to_i
 end
 
 
-CSV.foreach("users.csv", headers: true) do |row|
+CSV.foreach("csv/users.csv", headers: true) do |row|
     if row['confirmed_at'].blank?
         next
     end
@@ -34,14 +34,14 @@ CSV.foreach("users.csv", headers: true) do |row|
     end
 end
 
-CSV.open('orders.csv','w') do |csv|
+CSV.open('csv/orders.csv','w') do |csv|
     csv << ['id',  'user_id', 'ordered_at', 'total']
     orders.each do |order|
         csv << order
     end
 end
 
-CSV.open('order_statements.csv','w') do |csv|
+CSV.open('csv/order_statements.csv','w') do |csv|
     csv << ['order_id',  'item_id', 'quantity']
     order_statements.each do |order_statement|
         csv << order_statement

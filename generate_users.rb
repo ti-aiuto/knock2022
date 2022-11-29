@@ -18,7 +18,7 @@ base_datetime = Time.new(2022, 10, 1)
     users << [200001 + index, registered_at.utc.iso8601, confirmed_at&.utc&.iso8601]
 end
 
-CSV.open('users.csv','w') do |csv|
+CSV.open('csv/users.csv','w') do |csv|
     csv << ['id', 'registered_at', 'confirmed_at']
     users.each do |user|
         csv << user
