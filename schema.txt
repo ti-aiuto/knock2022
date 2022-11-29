@@ -26,7 +26,6 @@ date_jst:DATE,
 path:STRING,
 method:STRING,
 status_code:STRING,
-user_agent:STRING,
 request_id:STRING,
 user_id:INTEGER
 
