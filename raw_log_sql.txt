@@ -1,0 +1,10 @@
+SELECT
+  UNIX_SECONDS(time) time,
+  TO_JSON_STRING(STRUCT( path,
+      method,
+      status_code,
+      request_id,
+      CAST(user_id AS STRING) AS user_id)) message
+FROM
+  `aiuto-public.knock2022_simple_ec.all_access_log_transform`
+  

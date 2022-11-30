@@ -134,17 +134,3 @@ CSV.open('csv/access_log_transform.csv','w') do |csv|
     end
 end
 
-CSV.open('csv/access_log_raw.csv','w') do |csv|
-    csv << ['time', 'message']
-    access_log.each do |log_item|
-        message = {
-            path: log_item[2], 
-            method: log_item[3], 
-            status_code: log_item[4].to_s, 
-            request_id: log_item[6].to_s, 
-            user_id: log_item[7].to_s.presence
-        }
-        csv << [Time.zone.parse(log_item[0]).to_i, message.to_json]
-    end
-end
-
